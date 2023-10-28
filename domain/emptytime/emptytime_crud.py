@@ -66,7 +66,8 @@ def find_common_empty_times(db: Session, user_ids: List[str]) -> Dict[str, List[
     for weekday in weekdays:
         user_empty_times = {
             user_id: db.query(models.EmptyTime).filter(
-                models.EmptyTime.user_id == user_id,
+                models.EmptyTime.user_id == (db.query(models.User).filter(
+                    models.User.user_id == user_id).first()).id,
                 models.EmptyTime.weekday == weekday
             ).first()
             for user_id in user_ids
