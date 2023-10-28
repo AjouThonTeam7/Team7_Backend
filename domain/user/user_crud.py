@@ -2,7 +2,7 @@ import json
 from .user_schema import UserSchema
 from models import User
 from sqlalchemy.orm import Session
-from crowler.main import run_crawler
+import models
 
 
 def get_user(db: Session, user_id: str):
@@ -14,7 +14,6 @@ def get_users(db: Session, skip: int = 0, limit: int = 10):
 
 
 def create_user(db: Session, user: UserSchema):
-       run_crawler(user.user_id, user.user_pw)
     db_user = User(**user.dict())
     db.add(db_user)
     db.commit()
@@ -22,12 +21,14 @@ def create_user(db: Session, user: UserSchema):
     return db_user
 
 
-def delete_user(db: Session, user_id: str):
-    db_user = db.query(User).filter(
-        User.user_id == user_id).first()
-    if db_user:
-        db.delete(db_user)
-        db.commit()
+def delete_user(db: Session, user_id: int):
+    # Delete associated empty_time records
+    db.query(models.EmptyTime).filter(
+        models.EmptyTime.user_id == user_id).delete()
+    # Now delete the user
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    db.delete(db_user)
+    db.commit()
     return db_user
 
 

@@ -47,8 +47,10 @@ def is_overlap(time_slot1, time_table):
 
 def login(wait, ID, PASSWORD):
     input_id = wait.until(EC.presence_of_element_located((By.NAME, "userId")))
-    input_pw = wait.until(EC.presence_of_element_located((By.NAME, "password")))
-    btn_login = wait.until(EC.presence_of_element_located((By.ID, "loginSubmit")))
+    input_pw = wait.until(
+        EC.presence_of_element_located((By.NAME, "password")))
+    btn_login = wait.until(
+        EC.presence_of_element_located((By.ID, "loginSubmit")))
     input_id.send_keys(f"{ID}")
     input_pw.send_keys(f"{PASSWORD}")
     btn_login.click()
@@ -61,10 +63,12 @@ def find_item(driver):
     subject_table = []
     for w in week:
         day = wait.until(
-            EC.presence_of_element_located((By.XPATH, f"//em[contains(text(), '{w}')]"))
+            EC.presence_of_element_located(
+                (By.XPATH, f"//em[contains(text(), '{w}')]"))
         )
         day.click()
-        wait.until(EC.staleness_of(driver.find_element(By.CLASS_NAME, "nb-t-05-item")))
+        wait.until(EC.staleness_of(
+            driver.find_element(By.CLASS_NAME, "nb-t-05-item")))
         page_source = driver.page_source
         soup = BeautifulSoup(page_source, "html.parser")
         items = soup.find_all(class_="nb-t-05-item")
@@ -81,7 +85,8 @@ def find_item(driver):
                 subject = subject_element.get_text()
                 subject_table.append(subject)
         time_table[w] = time_schedule
-        major = soup.select_one(".nb-p-01-myInfo dd.ng-binding").get_text().strip()
+        major = soup.select_one(
+            ".nb-p-01-myInfo dd.ng-binding").get_text().strip()
         name_element = soup.find("dt", class_="ng-binding")
         name = name_element.get_text(strip=True)
     return time_table, subject_table, major, name, soup
@@ -100,7 +105,8 @@ def run_crowler(ID, PASSWORD):
     driver.get("https://mportal.ajou.ac.kr/main.do")
     print("chrome driver를 연결중입니다 ..")
     element = wait.until(
-        EC.presence_of_element_located((By.XPATH, "//a[contains(text(), '로그인하세요')]"))
+        EC.presence_of_element_located(
+            (By.XPATH, "//a[contains(text(), '로그인하세요')]"))
     )
     element.click()
     # monday = driver.find_element(By.XPATH, f"//em[contains(text(), 월)]")
