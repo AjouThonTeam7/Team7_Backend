@@ -79,7 +79,8 @@ def find_item(driver):
                 subject = subject_element.get_text()
                 subject_table.append(subject)
         time_table[w] = time_schedule
-        major = soup.select_one(".nb-p-01-myInfo dd.ng-binding").get_text().strip()
+        major = soup.select_one(
+            ".nb-p-01-myInfo dd.ng-binding").get_text().strip()
         name_element = soup.find("dt", class_="ng-binding")
         name = name_element.get_text(strip=True)
     return time_table, subject_table, major, name, soup
@@ -92,18 +93,20 @@ def run_crowler(ID, PASSWORD):
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
     driver.get("https://mportal.ajou.ac.kr/main.do")
     print("chrome driver를 연결중입니다 ..")
-    btn_menu_1 = driver.find_element(By.XPATH, "//a[contains(text(), '로그인하세요')]")
+    btn_menu_1 = driver.find_element(
+        By.XPATH, "//a[contains(text(), '로그인하세요')]")
     sleep(2)
     btn_menu_1.click()
     # monday = driver.find_element(By.XPATH, f"//em[contains(text(), 월)]")
     # monday.click()
     # 암묵적으로 웹 자원 로드를 위해 5초까지 기다려 준다.
     wait = WebDriverWait(driver, 1)
+    sleep(2)
 
     # login
     login(driver, ID, PASSWORD)
     print("login 중입니다...")
-    sleep(2)
+    sleep(7)
     # item 가져오기
     time_table, subject_table, major, name, soup = find_item(driver)
     print("정보를 가져오는 중입니다...")

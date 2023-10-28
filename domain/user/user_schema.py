@@ -14,6 +14,11 @@ class LoginUser(BaseModel):
     user_pw: str
 
 
+class InputUser(BaseModel):
+    user_id: str
+    user_pw: str
+
+
 class CreateUser(BaseModel):
     user_id: str
     user_pw: str

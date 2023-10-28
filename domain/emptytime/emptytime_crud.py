@@ -14,6 +14,19 @@ def create_empty_time(db: Session, user_id: int, weekday: str, periods: list):
     return db_empty_time
 
 
+def get_all_empty_times(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(models.EmptyTime).offset(skip).limit(limit).all()
+
+
+def get_user_empty_times(db: Session, user_id: int):
+    db_empty_times = db.query(models.EmptyTime).filter(
+        models.EmptyTime.user_id == user_id).all()
+    if db_empty_times is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    return db_empty_times
+
+
 def get_empty_times(db: Session, user_id: int):
     return db.query(models.EmptyTime).filter(models.EmptyTime.user_id == user_id).all()
 
@@ -45,7 +58,7 @@ def get_overlap_users_by_period(db: Session, user_id: int, weekday: str) -> Dict
     return response_data
 
 
-def find_common_empty_times(db: Session, user_ids: List[int]) -> Dict[str, List[str]]:
+def find_common_empty_times(db: Session, user_ids: List[str]) -> Dict[str, List[str]]:
     weekdays = ['월', '화', '수',
                 '목', '금']  # Adjust as needed
     common_empty_times = {}
