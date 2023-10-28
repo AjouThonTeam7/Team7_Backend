@@ -9,18 +9,26 @@ from typing import List, Optional
 
 #     class Config:
 #         orm_mode = True
-class CreateUser(BaseModel):
+class LoginUser(BaseModel):
     user_id: str
     user_pw: str
 
 
 class UserSchema(BaseModel):
+    id: int
     user_id: str
     user_pw: str
     user_name: str
     major: str
     subjects: List[str]
-    # empty_times: List[EmptyTimeSchema]  # Updated to use EmptyTimeSchema
 
     class Config:
         orm_mode = True
+
+
+# class UserSchema(CreateUser):
+#     id: int
+#     # empty_times: List[EmptyTimeSchema]  # Updated to use EmptyTimeSchema
+
+#     class Config:
+#         orm_mode = True
