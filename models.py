@@ -21,5 +21,5 @@ class User(Base):
     user_pw = Column(String, nullable=False)
     user_name = Column(String, nullable=False)
     major = Column(String, nullable=False)
-    empty_times = relationship('EmptyTime', backref='user')
+    empty_times = relationship("EmptyTime", backref="user")
     subjects = Column(JSON)
