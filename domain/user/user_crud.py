@@ -2,13 +2,19 @@ import json
 from .user_schema import UserSchema
 from models import User
 from sqlalchemy.orm import Session
+from crowler.main import run_crawler
 
 
 def get_user(db: Session, user_id: str):
     return db.query(User).filter(User.user_id == user_id).first()
 
 
+def get_users(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(User).offset(skip).limit(limit).all()
+
+
 def create_user(db: Session, user: UserSchema):
+       run_crawler(user.user_id, user.user_pw)
     db_user = User(**user.dict())
     db.add(db_user)
     db.commit()

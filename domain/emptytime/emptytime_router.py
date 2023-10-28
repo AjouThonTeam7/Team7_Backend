@@ -13,7 +13,7 @@ def create_user_empty_time(user_id: int, weekday: str, periods: list, db: Sessio
 
 @router.get("/users/{user_id}/empty_times/")
 def read_user_empty_times(user_id: int, db: Session = Depends(get_db)):
-    db_empty_times = crud.get_empty_times(db, user_id=user_id)
+    db_empty_times = emptytime_crud.get_empty_times(db, user_id=user_id)
     if db_empty_times is None:
         raise HTTPException(status_code=404, detail="Empty times not found")
     return db_empty_times

@@ -28,8 +28,14 @@ def create_user(user: user_schema.UserSchema, db: Session = Depends(get_db)):
     return user_crud.create_user(db, user=user)
 
 
+@router.get("/users/", response_model=List[user_schema.UserSchema])
+def read_users(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    users = user_crud.get_users(db, skip=skip, limit=limit)
+    return users
+
+
 @router.post("/login", response_model=user_schema.UserSchema)
-def login_user(user: user_schema.CreateUser, db: Session = Depends(get_db)):
+def login_user(user: user_schema.LoginUser, db: Session = Depends(get_db)):
     db_user = user_crud.authenticate_user(
         db, user_id=user.user_id, user_pw=user.user_pw
     )
