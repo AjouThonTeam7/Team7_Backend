@@ -52,7 +52,6 @@ def login(wait, ID, PASSWORD):
     input_id.send_keys(f"{ID}")
     input_pw.send_keys(f"{PASSWORD}")
     btn_login.click()
-    sleep(2)
 
 
 def find_item(driver):
@@ -111,7 +110,6 @@ def run_crowler(ID, PASSWORD):
     # login
     login(wait, ID, PASSWORD)
     print("login 중입니다...")
-    sleep(2)
     # item 가져오기
     time_table, subject_table, major, name, soup = find_item(driver)
     print("정보를 가져오는 중입니다...")
