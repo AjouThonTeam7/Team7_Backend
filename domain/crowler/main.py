@@ -9,6 +9,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import json
 
 
@@ -44,11 +45,10 @@ def is_overlap(time_slot1, time_table):
     return False
 
 
-def login(driver, ID, PASSWORD):
-    driver.maximize_window()
-    input_id = driver.find_element("name", "userId")
-    input_pw = driver.find_element("name", "password")
-    btn_login = driver.find_element("id", "loginSubmit")
+def login(wait, ID, PASSWORD):
+    input_id = wait.until(EC.presence_of_element_located((By.NAME, "userId")))
+    input_pw = wait.until(EC.presence_of_element_located((By.NAME, "password")))
+    btn_login = wait.until(EC.presence_of_element_located((By.ID, "loginSubmit")))
     input_id.send_keys(f"{ID}")
     input_pw.send_keys(f"{PASSWORD}")
     btn_login.click()
@@ -56,13 +56,16 @@ def login(driver, ID, PASSWORD):
 
 
 def find_item(driver):
+    wait = WebDriverWait(driver, 20)
     week = ["월", "화", "수", "목", "금"]
     time_table = {}
     subject_table = []
     for w in week:
-        day = driver.find_element(By.XPATH, f"//em[contains(text(), '{w}')]")
+        day = wait.until(
+            EC.presence_of_element_located((By.XPATH, f"//em[contains(text(), '{w}')]"))
+        )
         day.click()
-        sleep(2)
+        wait.until(EC.staleness_of(driver.find_element(By.CLASS_NAME, "nb-t-05-item")))
         page_source = driver.page_source
         soup = BeautifulSoup(page_source, "html.parser")
         items = soup.find_all(class_="nb-t-05-item")
@@ -89,19 +92,24 @@ def find_item(driver):
 
 
 def run_crowler(ID, PASSWORD):
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+    caps = DesiredCapabilities().CHROME
+    caps["pageLoadStrategy"] = "none"
+    driver = webdriver.Chrome(
+        service=Service(ChromeDriverManager().install()), desired_capabilities=caps
+    )
+    wait = WebDriverWait(driver, 20)
     driver.get("https://mportal.ajou.ac.kr/main.do")
     print("chrome driver를 연결중입니다 ..")
-    btn_menu_1 = driver.find_element(By.XPATH, "//a[contains(text(), '로그인하세요')]")
-    sleep(2)
-    btn_menu_1.click()
+    element = wait.until(
+        EC.presence_of_element_located((By.XPATH, "//a[contains(text(), '로그인하세요')]"))
+    )
+    element.click()
     # monday = driver.find_element(By.XPATH, f"//em[contains(text(), 월)]")
     # monday.click()
     # 암묵적으로 웹 자원 로드를 위해 5초까지 기다려 준다.
-    wait = WebDriverWait(driver, 1)
 
     # login
-    login(driver, ID, PASSWORD)
+    login(wait, ID, PASSWORD)
     print("login 중입니다...")
     sleep(2)
     # item 가져오기
