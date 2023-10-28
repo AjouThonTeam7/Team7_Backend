@@ -32,13 +32,39 @@ def get_overlap_users_by_period(db: Session, user_id: int, weekday: str) -> Dict
         matching_empty_times = db.query(models.EmptyTime).filter(
             models.EmptyTime.weekday == weekday,
             # Assumes periods is a JSON array
-            models.EmptyTime.periods.contains([period])
+            models.EmptyTime.periods.contains(period)
         ).all()
 
-        user_ids = [empty_time.user_id for empty_time in matching_empty_times]
+        user_ids = [
+            empty_time.user_id for empty_time in matching_empty_times if empty_time.user_id != user_id]
         overlap_users = db.query(models.User).filter(
             models.User.id.in_(user_ids)).all()
         response_data[period] = [UserSchema.from_orm(
             user) for user in overlap_users]
 
     return response_data
+
+
+def find_common_empty_times(db: Session, user_ids: List[int]) -> Dict[str, List[str]]:
+    weekdays = ['월', '화', '수',
+                '목', '금']  # Adjust as needed
+    common_empty_times = {}
+
+    for weekday in weekdays:
+        user_empty_times = {
+            user_id: db.query(models.EmptyTime).filter(
+                models.EmptyTime.user_id == user_id,
+                models.EmptyTime.weekday == weekday
+            ).first()
+            for user_id in user_ids
+        }
+
+        common_periods = set(
+            user_empty_times[user_ids[0]].periods) if user_empty_times[user_ids[0]] else set()
+        for user_id, empty_time in user_empty_times.items():
+            if empty_time:
+                common_periods.intersection_update(empty_time.periods)
+
+        common_empty_times[weekday] = list(common_periods)
+
+    return common_empty_times

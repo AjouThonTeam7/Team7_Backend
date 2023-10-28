@@ -2,13 +2,14 @@ from fastapi import APIRouter, HTTPException, Depends, status
 from sqlalchemy.orm import Session
 from . import emptytime_crud, emptytime_schema
 from database import get_db
+from typing import Dict, List
 
 router = APIRouter()
 
 
 @router.post("/users/{user_id}/empty_times/")
 def create_user_empty_time(user_id: int, weekday: str, periods: list, db: Session = Depends(get_db)):
-    return crud.create_empty_time(db=db, user_id=user_id, weekday=weekday, periods=periods)
+    return emptytime_crud.create_empty_time(db=db, user_id=user_id, weekday=weekday, periods=periods)
 
 
 @router.get("/users/{user_id}/empty_times/")
@@ -21,6 +22,11 @@ def read_user_empty_times(user_id: int, db: Session = Depends(get_db)):
 
 @router.post("/find_overlap_users/")
 def find_overlap_users(request: emptytime_schema.RequestSchema, db: Session = Depends(get_db)):
-    overlap_users_by_period = get_overlap_users_by_period(
+    overlap_users_by_period = emptytime_crud.get_overlap_users_by_period(
         db, user_id=request.id, weekday=request.weekday)
     return overlap_users_by_period
+
+
+@router.post("/find_common_empty_times/", response_model=Dict[str, List[str]])
+def find_common_empty_times(user_ids: List[int], db: Session = Depends(get_db)):
+    return emptytime_crud.find_common_empty_times(db, user_ids)

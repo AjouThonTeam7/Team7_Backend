@@ -14,6 +14,17 @@ class LoginUser(BaseModel):
     user_pw: str
 
 
+class CreateUser(BaseModel):
+    user_id: str
+    user_pw: str
+    user_name: str
+    major: str
+    subjects: List[str]
+
+    class Config:
+        orm_mode = True
+
+
 class UserSchema(BaseModel):
     id: int
     user_id: str
