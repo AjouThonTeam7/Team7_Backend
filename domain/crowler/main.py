@@ -21,7 +21,7 @@ def make_rest_time(time_table):
         "D": "13:30~15:00",
         "E": "15:00~16:30",
         "F": "16:30~18:00",
-        "G": "18:00~19:30",
+        "G": "18:00~19:30", 
     }
     rest_time = []
     for x in time_mapping.items():

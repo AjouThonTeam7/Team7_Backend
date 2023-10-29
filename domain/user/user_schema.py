@@ -7,6 +7,7 @@ from typing import List, Optional
 #     weekday: str  # e.g., 'Monday'
 #     periods: List[str]  # List of periods e.g., ['A', 'B', 'C']
 
+
 #     class Config:
 #         orm_mode = True
 class LoginUser(BaseModel):
@@ -27,7 +28,7 @@ class CreateUser(BaseModel):
     subjects: List[str]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class UserSchema(BaseModel):
@@ -39,7 +40,7 @@ class UserSchema(BaseModel):
     subjects: List[str]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 # class UserSchema(CreateUser):
