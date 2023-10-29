@@ -1,4 +1,4 @@
 from .main import run_crowler
 
-data = run_crowler("sdfg8931", "sehyun5786")
+data = run_crowler()
 print(data)

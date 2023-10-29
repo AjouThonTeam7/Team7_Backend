@@ -29,7 +29,7 @@ def read_user_empty_times(user_id: int, db: Session = Depends(get_db)):
     db_empty_times = emptytime_crud.get_empty_times(db, user_id=user_id)
     if db_empty_times is None:
         raise HTTPException(status_code=404, detail="Empty times not found")
-    return {"data": db_empty_times}
+    return db_empty_times
 
 
 @router.post("/find_overlap_users/")
